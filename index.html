@@ -33,6 +33,7 @@
     .error-msg { color: #d93025; text-align: center; font-weight: bold; margin-top: 10px; }
     .logout-btn { background-color: #fff; color: #d93025; border: 1px solid #d93025; margin-top: 20px;}
     .download-btn { background-color: #1e8e3e; margin-top: 20px; }
+    .download-btn:hover { background-color: #188038; }
     
     .table-responsive { overflow-x: auto; margin-top: 20px; }
     table { border-collapse: collapse; width: 100%; white-space: nowrap; }
@@ -78,7 +79,7 @@
         <div class="form-group"><label>姓名確認：</label><input type="text" id="studentNameDisplay" readonly placeholder="選擇座號後顯示姓名" style="background-color: #f1f3f4;"></div>
       </div>
 
-      <!-- 功能選擇 UI (動態生成) -->
+      <!-- 功能選擇 UI -->
       <div id="functionSearchUI">
         <label>請勾選欲搜尋並輸出的欄位 (可複選)：</label>
         <div class="checkbox-grid" id="checkboxGrid"></div>
@@ -94,6 +95,7 @@
       <h2>查詢結果</h2>
       <div id="resultCount" style="text-align:center; font-weight:bold; margin-bottom:10px;"></div>
       <div class="table-responsive" id="exportContent"></div>
+      <!-- 下載按鈕 (純文字) -->
       <button class="download-btn" onclick="exportToWord()">下載為 Word 檔案</button>
       <button onclick="backToSearch()">返回重新查詢</button>
     </div>
@@ -102,22 +104,22 @@
 
   <script>
     // ==========================================
-    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzMuz7jlTf4h9gHtJbunqJ8pP-f16K5SfsEVNvhUWRUu8jFuCdrI89Ev8fHLoRy__9OJw/exec";
+    const GAS_API_URL = "https://script.google.com/macros/library/d/10fPxrEG30YMouraIJr8GJi8r4I7-H_LygNgc71LYi3_BCwTnAK7Z6Haf/4";
     // ==========================================
 
     let allStudentsData = []; 
     let currentUsername = ""; 
     let currentPassword = ""; 
 
-    // 定義所有可選功能及其子選項 (相容多種 Excel 標題命名)
+    // 定義所有可選功能及其子選項
     const functionConfig = [
       { id: "f1", label: "障礙別 / 特教資格", aliases: ["障礙別", "特教資格"], options: ["智能障礙", "自閉症", "自閉症(智)", "身體病弱", "腦性麻痺", "腦性麻痺(智、肢)", "情緒行為障礙", "視覺障礙", "聽覺障礙", "學習障礙", "學習障礙(兼有自閉特質)", "學習障礙(兼有情緒行為困擾)", "學習障礙(書寫)", "其他障礙", "學習障礙(數學運算)", "學習障礙(識字、書寫)", "學習障礙(注意力)"] },
       { id: "f2", label: "酌減人數", aliases: ["酌減人數"], options: ["1", "2", "3"] },
       { id: "f3", label: "手冊 / 證明", aliases: ["手冊/證明", "手冊(輕/中/重)"], options: ["輕度", "第1類/輕度", "第1類b152.1(輕度)", "新制 1 類/輕度", "第1類【b117.1】輕度", "第1類【b122.1】輕度", "新制 2 類/輕度", "新制4類/輕度", "新制11類/輕度", "中度", "第1類/中度", "中度(第1類b117.2)", "新制 1 類/中度", "第七類/中度", "新制1、7類/中度"] },
       { id: "f4", label: "考評服務", aliases: ["考評服務"], options: ["電腦作答", "代謄答案", "延長時間", "報讀", "少人考場", "誦讀題目", "口頭回答", "英聽調整", "英聽(靠近播放器)", "安排適當座位", "延長(大考)", "電腦(作文、非選)", "延長", "獨立考場", "代謄", "少人+延長"] },
       { id: "f5", label: "補救教學", aliases: ["補救教學"], options: ["數學", "英文"] },
-      { id: "f6", label: "輔導老師", aliases: ["輔導老師", "輔導師"], options: ["林于清", "丁詩宜", "林妍君", "黃哲夫", "陳佳欣", "廖淑雯", "李佩綺", "黃鈺涵"] },
-      { id: "f7", label: "個管師", aliases: ["個管師"], options: ["陳韋伶", "黃瀅璇", "陳品秀", "杜泱儒", "林宇彤", "洪媺玲", "呂明芳", "黃紀植", "張作崧", "徐瑜霈"] },
+      { id: "f6", label: "輔導老師", aliases: ["輔導老師"], options: ["林于清", "丁詩宜", "林妍君", "黃哲夫", "陳佳欣", "廖淑雯", "李佩綺", "黃鈺涵"] },
+      { id: "f7", label: "個管老師", aliases: ["個管老師", "個管師"], options: ["陳韋伶", "黃瀅璇", "陳品秀", "杜泱儒", "林宇彤", "洪媺玲", "呂明芳", "黃紀植", "張作崧", "徐瑜霈"] },
       { id: "f8", label: "無障礙需求", aliases: ["無障礙需求"], options: [] },
       { id: "f9", label: "助理人員", aliases: ["助理人員"], options: [] },
       { id: "f10", label: "職能", aliases: ["職能"], options: [] },
@@ -135,7 +137,6 @@
       { id: "f22", label: "備註", aliases: ["備註"], options: [] }
     ];
 
-    // 初始化動態生成 Checkbox
     function initFunctionUI() {
       const grid = document.getElementById('checkboxGrid');
       grid.innerHTML = "";
@@ -346,7 +347,6 @@
       btn.disabled = false; btn.innerText = "開始查詢";
     }
 
-    // 渲染支援 Word 匯出的 HTML 表格
     function renderTable(dataArray) {
       if(dataArray.length === 0) return;
       const headers = Object.keys(dataArray[0]);
