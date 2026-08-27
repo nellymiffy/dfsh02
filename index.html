@@ -6,7 +6,7 @@
   <title>學生資料查詢系統</title>
   <style>
     body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; margin: 0; padding: 20px; color: #333; }
-    .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    .container { max-width: 900px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
     h2 { text-align: center; color: #1a73e8; margin-top: 0; }
     
     .form-group { margin-bottom: 20px; }
@@ -18,11 +18,11 @@
     .radio-group input { margin-right: 8px; transform: scale(1.2); }
 
     /* 功能選擇區塊樣式 */
-    .checkbox-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px; background: #f8f9fa; padding: 20px; border-radius: 8px; border: 1px solid #e0e0e0;}
+    .checkbox-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 15px; background: #f8f9fa; padding: 20px; border-radius: 8px; border: 1px solid #e0e0e0;}
     .check-item { display: flex; align-items: center; justify-content: space-between; padding: 8px; border-bottom: 1px dashed #ccc; }
-    .check-item label { margin-bottom: 0; cursor: pointer; display: flex; align-items: center; font-weight: normal; }
+    .check-item label { margin-bottom: 0; cursor: pointer; display: flex; align-items: center; font-weight: normal; font-size: 15px; }
     .check-item input[type="checkbox"] { margin-right: 10px; transform: scale(1.2); }
-    .check-item select { width: 150px; padding: 6px; font-size: 14px; margin-left: 10px; }
+    .check-item select { width: 160px; padding: 6px; font-size: 14px; margin-left: 10px; }
 
     button { width: 100%; padding: 14px; background-color: #1a73e8; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; }
     button:hover { background-color: #1557b0; }
@@ -66,8 +66,8 @@
       </div>
 
       <div class="radio-group" id="modeSelector" style="display:none;">
-        <label><input type="radio" name="searchMode" value="individual" checked onchange="toggleMode()"> 個人詳細搜尋</label>
-        <label><input type="radio" name="searchMode" value="function" onchange="toggleMode()"> 自訂功能搜尋</label>
+        <label><input type="radio" name="searchMode" value="individual" checked onchange="toggleMode()"> 個人</label>
+        <label><input type="radio" name="searchMode" value="function" onchange="toggleMode()"> 功能選擇</label>
       </div>
 
       <!-- 個人搜尋 UI -->
@@ -94,7 +94,7 @@
       <h2>查詢結果</h2>
       <div id="resultCount" style="text-align:center; font-weight:bold; margin-bottom:10px;"></div>
       <div class="table-responsive" id="exportContent"></div>
-      <button class="download-btn" onclick="exportToWord()">📥 下載為 Word 檔案</button>
+      <button class="download-btn" onclick="exportToWord()">下載為 Word 檔案</button>
       <button onclick="backToSearch()">返回重新查詢</button>
     </div>
 
@@ -102,7 +102,7 @@
 
   <script>
     // ==========================================
-    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzv9nfbXW939hjWj5uge5i8CHr0Nn-YMAUI6Jno6yDtmP_oOvGa_xT5KTmkgVq8pJBNFg/exec";
+    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzMuz7jlTf4h9gHtJbunqJ8pP-f16K5SfsEVNvhUWRUu8jFuCdrI89Ev8fHLoRy__9OJw/exec";
     // ==========================================
 
     let allStudentsData = []; 
@@ -116,22 +116,22 @@
       { id: "f3", label: "手冊 / 證明", aliases: ["手冊/證明", "手冊(輕/中/重)"], options: ["輕度", "第1類/輕度", "第1類b152.1(輕度)", "新制 1 類/輕度", "第1類【b117.1】輕度", "第1類【b122.1】輕度", "新制 2 類/輕度", "新制4類/輕度", "新制11類/輕度", "中度", "第1類/中度", "中度(第1類b117.2)", "新制 1 類/中度", "第七類/中度", "新制1、7類/中度"] },
       { id: "f4", label: "考評服務", aliases: ["考評服務"], options: ["電腦作答", "代謄答案", "延長時間", "報讀", "少人考場", "誦讀題目", "口頭回答", "英聽調整", "英聽(靠近播放器)", "安排適當座位", "延長(大考)", "電腦(作文、非選)", "延長", "獨立考場", "代謄", "少人+延長"] },
       { id: "f5", label: "補救教學", aliases: ["補救教學"], options: ["數學", "英文"] },
-      { id: "f6", label: "輔導老師", aliases: ["輔導老師"], options: ["林于清", "丁詩宜", "林妍君", "黃哲夫", "陳佳欣", "廖淑雯", "李佩綺", "黃鈺涵"] },
-      { id: "f7", label: "無障礙需求", aliases: ["無障礙需求"], options: [] },
-      { id: "f8", label: "助理人員", aliases: ["助理人員"], options: [] },
-      { id: "f9", label: "職能", aliases: ["職能"], options: [] },
-      { id: "f10", label: "物理", aliases: ["物理"], options: [] },
-      { id: "f11", label: "語言", aliases: ["語言"], options: [] },
-      { id: "f12", label: "視巡", aliases: ["視巡"], options: [] },
-      { id: "f13", label: "聽巡", aliases: ["聽巡"], options: [] },
-      { id: "f14", label: "聽管", aliases: ["聽管"], options: [] },
-      { id: "f15", label: "課程 (去刪除線)", aliases: ["課程"], options: [] },
-      { id: "f16", label: "轉銜資料袋", aliases: ["轉銜資料袋"], options: [] },
-      { id: "f17", label: "大白卡", aliases: ["大白卡"], options: [] },
-      { id: "f18", label: "最新鑑定日期", aliases: ["最新鑑定日期"], options: [] },
-      { id: "f19", label: "資格適用期限", aliases: ["資格適用期限"], options: [] },
-      { id: "f20", label: "導師", aliases: ["導師"], options: [] },
-      { id: "f21", label: "個管師", aliases: ["個管師"], options: [] },
+      { id: "f6", label: "輔導老師", aliases: ["輔導老師", "輔導師"], options: ["林于清", "丁詩宜", "林妍君", "黃哲夫", "陳佳欣", "廖淑雯", "李佩綺", "黃鈺涵"] },
+      { id: "f7", label: "個管師", aliases: ["個管師"], options: ["陳韋伶", "黃瀅璇", "陳品秀", "杜泱儒", "林宇彤", "洪媺玲", "呂明芳", "黃紀植", "張作崧", "徐瑜霈"] },
+      { id: "f8", label: "無障礙需求", aliases: ["無障礙需求"], options: [] },
+      { id: "f9", label: "助理人員", aliases: ["助理人員"], options: [] },
+      { id: "f10", label: "職能", aliases: ["職能"], options: [] },
+      { id: "f11", label: "物理", aliases: ["物理"], options: [] },
+      { id: "f12", label: "語言", aliases: ["語言"], options: [] },
+      { id: "f13", label: "視巡", aliases: ["視巡"], options: [] },
+      { id: "f14", label: "聽巡", aliases: ["聽巡"], options: [] },
+      { id: "f15", label: "聽管", aliases: ["聽管"], options: [] },
+      { id: "f16", label: "課程 (去刪除線)", aliases: ["課程"], options: [] },
+      { id: "f17", label: "轉銜資料袋", aliases: ["轉銜資料袋"], options: [] },
+      { id: "f18", label: "大白卡", aliases: ["大白卡"], options: [] },
+      { id: "f19", label: "最新鑑定日期", aliases: ["最新鑑定日期"], options: [] },
+      { id: "f20", label: "資格適用期限", aliases: ["資格適用期限"], options: [] },
+      { id: "f21", label: "導師", aliases: ["導師"], options: [] },
       { id: "f22", label: "備註", aliases: ["備註"], options: [] }
     ];
 
@@ -250,7 +250,6 @@
       if (mode === 'individual') {
         btn.disabled = (document.getElementById('studentNameDisplay').value === "");
       } else {
-        // 功能搜尋模式：至少要勾選一個欄位才准許搜尋
         const anyChecked = functionConfig.some(cfg => document.getElementById(`chk_${cfg.id}`).checked);
         btn.disabled = !anyChecked;
       }
@@ -319,7 +318,7 @@
           if (chk.checked) {
             const sel = document.getElementById(`sel_${cfg.id}`);
             payload.selectedFunctions.push({
-              colNames: cfg.aliases, // 傳送可能的所有欄位名稱供後端尋找
+              colNames: cfg.aliases, 
               filterValue: sel ? sel.value : 'ANY'
             });
           }
@@ -342,7 +341,7 @@
           if (result.message.includes("權限")) logout();
         }
       } catch (err) {
-        msg.innerText = "查詢失敗，請檢查網路連線或是否授權";
+        msg.innerText = "查詢失敗，請檢查網路連線";
       }
       btn.disabled = false; btn.innerText = "開始查詢";
     }
