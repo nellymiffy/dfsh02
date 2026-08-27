@@ -6,7 +6,7 @@
   <title>學生資料查詢系統</title>
   <style>
     body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; margin: 0; padding: 20px; color: #333; }
-    .container { max-width: 700px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
     h2 { text-align: center; color: #1a73e8; margin-top: 0; }
     
     .form-group { margin-bottom: 20px; }
@@ -17,22 +17,23 @@
     .radio-group label { display: inline-flex; align-items: center; cursor: pointer; font-weight: normal; margin-bottom: 0; }
     .radio-group input { margin-right: 8px; transform: scale(1.2); }
 
+    /* 功能選擇區塊樣式 */
+    .checkbox-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px; background: #f8f9fa; padding: 20px; border-radius: 8px; border: 1px solid #e0e0e0;}
+    .check-item { display: flex; align-items: center; justify-content: space-between; padding: 8px; border-bottom: 1px dashed #ccc; }
+    .check-item label { margin-bottom: 0; cursor: pointer; display: flex; align-items: center; font-weight: normal; }
+    .check-item input[type="checkbox"] { margin-right: 10px; transform: scale(1.2); }
+    .check-item select { width: 150px; padding: 6px; font-size: 14px; margin-left: 10px; }
+
     button { width: 100%; padding: 14px; background-color: #1a73e8; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; }
     button:hover { background-color: #1557b0; }
     button:disabled { background-color: #a8c7fa; cursor: not-allowed; }
     
-    #searchSection, #resultSection, #individualSearchUI, #functionSearchUI, #disabilitySubUI { display: none; }
+    #searchSection, #resultSection, #individualSearchUI, #functionSearchUI { display: none; }
     
     .error-msg { color: #d93025; text-align: center; font-weight: bold; margin-top: 10px; }
-    .success-msg { color: #1e8e3e; text-align: center; font-weight: bold; margin-top: 10px; }
-    
     .logout-btn { background-color: #fff; color: #d93025; border: 1px solid #d93025; margin-top: 20px;}
-    .logout-btn:hover { background-color: #fce8e6; }
-    
     .download-btn { background-color: #1e8e3e; margin-top: 20px; }
-    .download-btn:hover { background-color: #188038; }
-
-    /* 網頁端表格預覽用樣式 */
+    
     .table-responsive { overflow-x: auto; margin-top: 20px; }
     table { border-collapse: collapse; width: 100%; white-space: nowrap; }
     th, td { border: 1px solid #ccc; padding: 8px 12px; text-align: left; }
@@ -42,8 +43,7 @@
 <body>
 
   <div class="container">
-    
-    <!-- 1. 登入區塊 -->
+    <!-- 登入區塊 -->
     <div id="loginSection">
       <h2>系統登入</h2>
       <div class="form-group"><label>帳號：</label><input type="text" id="username" placeholder="請輸入帳號"></div>
@@ -52,7 +52,7 @@
       <div id="loginMsg" class="error-msg"></div>
     </div>
 
-    <!-- 2. 查詢區塊 -->
+    <!-- 查詢區塊 -->
     <div id="searchSection">
       <h2>學生資料查詢</h2>
       
@@ -65,10 +65,9 @@
         </select>
       </div>
 
-      <!-- 模式選擇 -->
       <div class="radio-group" id="modeSelector" style="display:none;">
-        <label><input type="radio" name="searchMode" value="individual" checked onchange="toggleMode()"> 個人搜尋</label>
-        <label><input type="radio" name="searchMode" value="function" onchange="toggleMode()"> 功能選擇搜尋</label>
+        <label><input type="radio" name="searchMode" value="individual" checked onchange="toggleMode()"> 個人詳細搜尋</label>
+        <label><input type="radio" name="searchMode" value="function" onchange="toggleMode()"> 自訂功能搜尋</label>
       </div>
 
       <!-- 個人搜尋 UI -->
@@ -79,67 +78,22 @@
         <div class="form-group"><label>姓名確認：</label><input type="text" id="studentNameDisplay" readonly placeholder="選擇座號後顯示姓名" style="background-color: #f1f3f4;"></div>
       </div>
 
-      <!-- 功能選擇 UI -->
+      <!-- 功能選擇 UI (動態生成) -->
       <div id="functionSearchUI">
-        <div class="form-group">
-          <label>選擇功能：</label>
-          <select id="functionType" onchange="checkFunctionType()">
-            <option value="">請選擇...</option>
-            <option value="障礙別">障礙別</option>
-            <option value="手冊/證明">手冊/證明</option>
-            <option value="職能">職能</option>
-            <option value="語言">語言</option>
-            <option value="物理">物理</option>
-            <option value="視巡">視巡</option>
-            <option value="聽巡">聽巡</option>
-            <option value="聽管">聽管</option>
-            <option value="課程">課程</option>
-            <option value="助理人員">助理人員</option>
-            <option value="考評服務">考評服務</option>
-            <option value="最新鑑定日期">最新鑑定日期</option>
-            <option value="資格適用期限">資格適用期限</option>
-            <option value="導師">導師</option>
-            <option value="輔導師">輔導師</option>
-            <option value="個管師">個管師</option>
-            <option value="備註">備註</option>
-          </select>
-        </div>
-        
-        <!-- 障礙別專屬子選單 -->
-        <div class="form-group" id="disabilitySubUI">
-          <label>選擇障礙類別：</label>
-          <select id="disabilityType" onchange="checkReady()">
-            <option value="">請選擇...</option>
-            <option value="學習障礙">學習障礙</option>
-            <option value="自閉症(智)">自閉症(智)</option>
-            <option value="腦性麻痺(智、肢)">腦性麻痺(智、肢)</option>
-            <option value="自閉症">自閉症</option>
-            <option value="智能障礙">智能障礙</option>
-            <option value="情緒行為障礙">情緒行為障礙</option>
-            <option value="視覺障礙">視覺障礙</option>
-            <option value="聽覺障礙">聽覺障礙</option>
-            <option value="學習障礙(兼有自閉特質)">學習障礙(兼有自閉特質)</option>
-            <option value="學習障礙(兼有情緒行為困擾)">學習障礙(兼有情緒行為困擾)</option>
-          </select>
-        </div>
+        <label>請勾選欲搜尋並輸出的欄位 (可複選)：</label>
+        <div class="checkbox-grid" id="checkboxGrid"></div>
       </div>
 
       <button id="searchBtn" onclick="executeSearch()" disabled>開始查詢</button>
       <div id="searchMsg"></div>
-      
       <button class="logout-btn" onclick="logout()">登出</button>
     </div>
 
-    <!-- 3. 結果顯示區塊 -->
+    <!-- 結果區塊 -->
     <div id="resultSection">
       <h2>查詢結果</h2>
       <div id="resultCount" style="text-align:center; font-weight:bold; margin-bottom:10px;"></div>
-      
-      <!-- 包含表格的容器，用於匯出 Word -->
-      <div class="table-responsive" id="exportContent">
-        <!-- 資料將由 JS 動態生成 -->
-      </div>
-      
+      <div class="table-responsive" id="exportContent"></div>
       <button class="download-btn" onclick="exportToWord()">📥 下載為 Word 檔案</button>
       <button onclick="backToSearch()">返回重新查詢</button>
     </div>
@@ -148,12 +102,70 @@
 
   <script>
     // ==========================================
-    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbykEtgrwB4cCPoAhHdbpYrsYXMf_-pzgQBSIt4TJTrrPhPzQuQcdlLfBq0-9VYq0rbIcA/exec";
+    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzv9nfbXW939hjWj5uge5i8CHr0Nn-YMAUI6Jno6yDtmP_oOvGa_xT5KTmkgVq8pJBNFg/exec";
     // ==========================================
 
     let allStudentsData = []; 
     let currentUsername = ""; 
     let currentPassword = ""; 
+
+    // 定義所有可選功能及其子選項 (相容多種 Excel 標題命名)
+    const functionConfig = [
+      { id: "f1", label: "障礙別 / 特教資格", aliases: ["障礙別", "特教資格"], options: ["智能障礙", "自閉症", "自閉症(智)", "身體病弱", "腦性麻痺", "腦性麻痺(智、肢)", "情緒行為障礙", "視覺障礙", "聽覺障礙", "學習障礙", "學習障礙(兼有自閉特質)", "學習障礙(兼有情緒行為困擾)", "學習障礙(書寫)", "其他障礙", "學習障礙(數學運算)", "學習障礙(識字、書寫)", "學習障礙(注意力)"] },
+      { id: "f2", label: "酌減人數", aliases: ["酌減人數"], options: ["1", "2", "3"] },
+      { id: "f3", label: "手冊 / 證明", aliases: ["手冊/證明", "手冊(輕/中/重)"], options: ["輕度", "第1類/輕度", "第1類b152.1(輕度)", "新制 1 類/輕度", "第1類【b117.1】輕度", "第1類【b122.1】輕度", "新制 2 類/輕度", "新制4類/輕度", "新制11類/輕度", "中度", "第1類/中度", "中度(第1類b117.2)", "新制 1 類/中度", "第七類/中度", "新制1、7類/中度"] },
+      { id: "f4", label: "考評服務", aliases: ["考評服務"], options: ["電腦作答", "代謄答案", "延長時間", "報讀", "少人考場", "誦讀題目", "口頭回答", "英聽調整", "英聽(靠近播放器)", "安排適當座位", "延長(大考)", "電腦(作文、非選)", "延長", "獨立考場", "代謄", "少人+延長"] },
+      { id: "f5", label: "補救教學", aliases: ["補救教學"], options: ["數學", "英文"] },
+      { id: "f6", label: "輔導老師", aliases: ["輔導老師"], options: ["林于清", "丁詩宜", "林妍君", "黃哲夫", "陳佳欣", "廖淑雯", "李佩綺", "黃鈺涵"] },
+      { id: "f7", label: "無障礙需求", aliases: ["無障礙需求"], options: [] },
+      { id: "f8", label: "助理人員", aliases: ["助理人員"], options: [] },
+      { id: "f9", label: "職能", aliases: ["職能"], options: [] },
+      { id: "f10", label: "物理", aliases: ["物理"], options: [] },
+      { id: "f11", label: "語言", aliases: ["語言"], options: [] },
+      { id: "f12", label: "視巡", aliases: ["視巡"], options: [] },
+      { id: "f13", label: "聽巡", aliases: ["聽巡"], options: [] },
+      { id: "f14", label: "聽管", aliases: ["聽管"], options: [] },
+      { id: "f15", label: "課程 (去刪除線)", aliases: ["課程"], options: [] },
+      { id: "f16", label: "轉銜資料袋", aliases: ["轉銜資料袋"], options: [] },
+      { id: "f17", label: "大白卡", aliases: ["大白卡"], options: [] },
+      { id: "f18", label: "最新鑑定日期", aliases: ["最新鑑定日期"], options: [] },
+      { id: "f19", label: "資格適用期限", aliases: ["資格適用期限"], options: [] },
+      { id: "f20", label: "導師", aliases: ["導師"], options: [] },
+      { id: "f21", label: "個管師", aliases: ["個管師"], options: [] },
+      { id: "f22", label: "備註", aliases: ["備註"], options: [] }
+    ];
+
+    // 初始化動態生成 Checkbox
+    function initFunctionUI() {
+      const grid = document.getElementById('checkboxGrid');
+      grid.innerHTML = "";
+      functionConfig.forEach(cfg => {
+        let selectHtml = "";
+        if (cfg.options.length > 0) {
+          selectHtml = `<select id="sel_${cfg.id}" disabled onchange="checkReady()">
+                          <option value="ANY">不限 (有資料即可)</option>
+                          ${cfg.options.map(opt => `<option value="${opt}">${opt}</option>`).join('')}
+                        </select>`;
+        }
+        grid.innerHTML += `
+          <div class="check-item">
+            <label><input type="checkbox" id="chk_${cfg.id}" value="${cfg.id}" onchange="toggleCheck('${cfg.id}')"> ${cfg.label}</label>
+            ${selectHtml}
+          </div>
+        `;
+      });
+    }
+    initFunctionUI();
+
+    function toggleCheck(id) {
+      const chk = document.getElementById(`chk_${id}`);
+      const sel = document.getElementById(`sel_${id}`);
+      if (sel) {
+        sel.disabled = !chk.checked;
+        if(!chk.checked) sel.value = "ANY";
+      }
+      checkReady();
+    }
 
     async function login() {
       const user = document.getElementById('username').value;
@@ -200,7 +212,6 @@
         document.getElementById('functionSearchUI').style.display = 'none';
         return;
       }
-
       msg.innerText = "載入基本資料中..."; msg.className = "error-msg";
       document.getElementById('modeSelector').style.display = 'flex';
       toggleMode();
@@ -212,8 +223,7 @@
         const result = await response.json();
         if (result.success) {
           allStudentsData = result.data;
-          updateGrades(); 
-          msg.innerText = "";
+          updateGrades(); msg.innerText = "";
         } else {
           msg.innerText = result.message;
           if (result.message.includes("權限")) logout();
@@ -233,34 +243,19 @@
       checkReady();
     }
 
-    function checkFunctionType() {
-      const fType = document.getElementById('functionType').value;
-      const disUI = document.getElementById('disabilitySubUI');
-      if (fType === '障礙別') {
-        disUI.style.display = 'block';
-      } else {
-        disUI.style.display = 'none';
-        document.getElementById('disabilityType').value = "";
-      }
-      checkReady();
-    }
-
     function checkReady() {
       const mode = document.querySelector('input[name="searchMode"]:checked').value;
       const btn = document.getElementById('searchBtn');
       
       if (mode === 'individual') {
-        const hasName = document.getElementById('studentNameDisplay').value !== "";
-        btn.disabled = !hasName;
+        btn.disabled = (document.getElementById('studentNameDisplay').value === "");
       } else {
-        const fType = document.getElementById('functionType').value;
-        if (!fType) { btn.disabled = true; return; }
-        if (fType === '障礙別' && !document.getElementById('disabilityType').value) { btn.disabled = true; return; }
-        btn.disabled = false;
+        // 功能搜尋模式：至少要勾選一個欄位才准許搜尋
+        const anyChecked = functionConfig.some(cfg => document.getElementById(`chk_${cfg.id}`).checked);
+        btn.disabled = !anyChecked;
       }
     }
 
-    // --- 個人搜尋連動邏輯 ---
     function resetIndividualUI() {
       document.getElementById('gradeSelect').innerHTML = '<option value="">請選擇</option>';
       document.getElementById('classSelect').innerHTML = '<option value="">請先選擇年級</option>';
@@ -303,18 +298,13 @@
       checkReady();
     }
 
-    // --- 執行查詢 ---
     async function executeSearch() {
       const type = document.getElementById('schoolType').value;
       const mode = document.querySelector('input[name="searchMode"]:checked').value;
       const btn = document.getElementById('searchBtn');
       const msg = document.getElementById('searchMsg');
       
-      let payload = {
-        sheetName: type,
-        username: currentUsername,
-        password: currentPassword
-      };
+      let payload = { sheetName: type, username: currentUsername, password: currentPassword };
 
       if (mode === 'individual') {
         payload.action = 'getStudentData';
@@ -323,8 +313,17 @@
         payload.seat = document.getElementById('seatSelect').value;
       } else {
         payload.action = 'searchByFunction';
-        payload.funcName = document.getElementById('functionType').value;
-        payload.funcValue = document.getElementById('disabilityType').value;
+        payload.selectedFunctions = [];
+        functionConfig.forEach(cfg => {
+          const chk = document.getElementById(`chk_${cfg.id}`);
+          if (chk.checked) {
+            const sel = document.getElementById(`sel_${cfg.id}`);
+            payload.selectedFunctions.push({
+              colNames: cfg.aliases, // 傳送可能的所有欄位名稱供後端尋找
+              filterValue: sel ? sel.value : 'ANY'
+            });
+          }
+        });
       }
 
       btn.disabled = true; btn.innerText = "查詢中..."; msg.innerText = "";
@@ -339,33 +338,26 @@
           document.getElementById('resultCount').innerText = `共查詢到 ${result.data.length} 筆資料`;
           renderTable(result.data);
         } else {
-          msg.innerText = result.message;
-          msg.className = "error-msg";
+          msg.innerText = result.message; msg.className = "error-msg";
           if (result.message.includes("權限")) logout();
         }
       } catch (err) {
-        msg.innerText = "查詢失敗，請檢查網路連線";
+        msg.innerText = "查詢失敗，請檢查網路連線或是否授權";
       }
       btn.disabled = false; btn.innerText = "開始查詢";
     }
 
-    // --- 渲染支援 Word 匯出的 HTML 表格 ---
+    // 渲染支援 Word 匯出的 HTML 表格
     function renderTable(dataArray) {
       if(dataArray.length === 0) return;
-      
       const headers = Object.keys(dataArray[0]);
+      let html = `<table style="width: 100%; border-collapse: collapse; border: 1px solid #000; font-family: '微軟正黑體', sans-serif;"><tr>`;
       
-      // 使用 Inline CSS 確保 Word 匯出時保有框線與樣式
-      let html = `<table style="width: 100%; border-collapse: collapse; border: 1px solid #000; font-family: '微軟正黑體', sans-serif;">`;
-      
-      // 產生標題列
-      html += `<tr>`;
       headers.forEach(h => {
         html += `<th style="border: 1px solid #000; padding: 8px; background-color: #f2f2f2; font-weight: bold; text-align: left;">${h}</th>`;
       });
       html += `</tr>`;
       
-      // 產生資料列
       dataArray.forEach(row => {
         html += `<tr>`;
         headers.forEach(h => {
@@ -384,26 +376,17 @@
       document.getElementById('searchMsg').innerText = "";
     }
 
-    // --- 匯出為 Word 檔案 (.doc) ---
     function exportToWord() {
       const content = document.getElementById('exportContent').innerHTML;
-      
-      // Word 檔案的 HTML 宣告頭尾
       const preHtml = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>學生資料</title></head><body>";
       const postHtml = "</body></html>";
       
-      const html = preHtml + content + postHtml;
-      
-      // 轉換成 Blob 下載
-      const blob = new Blob(['\ufeff', html], { type: 'application/msword' });
+      const blob = new Blob(['\ufeff', preHtml + content + postHtml], { type: 'application/msword' });
       const url = URL.createObjectURL(blob);
-      
       const downloadLink = document.createElement("a");
-      document.body.appendChild(downloadLink);
       downloadLink.href = url;
-      // 根據搜尋模式決定檔名
-      const type = document.getElementById('schoolType').value;
-      downloadLink.download = `${type}_學生資料匯出.doc`;
+      downloadLink.download = `${document.getElementById('schoolType').value}_學生資料.doc`;
+      document.body.appendChild(downloadLink);
       downloadLink.click();
       document.body.removeChild(downloadLink);
       URL.revokeObjectURL(url);
